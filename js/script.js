@@ -33,20 +33,27 @@ document.addEventListener('DOMContentLoaded', () => {
           movieList = document.querySelector('.promo__interactive-list'),
           addForm = document.querySelector('form.add'),
           inputForm = addForm.querySelector('.adding__input'),
-          deleteMovi = document.querySelectorAll('delete'),
+          deleteMovi = document.querySelectorAll('.delete'),
           checkbox = addForm.querySelector('[type="checkbox"]');
 
-        addForm.addEventListener('submit', (event) => {
+    addForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        const newFilm = inputForm.value;
+        let newFilm = inputForm.value;
         const favorite = checkbox.checked;
-        /* if (newFilm.leght > 21 ) {
-            newFilm = newFilm.substring(0, 20) + '...';
-        } */
-        movieDB.movies.push(newFilm);
-        sortArr(movieDB.movies);
-    
-        createMoviList(movieDB.movies, movieList);
+        if(newFilm) {
+            if (newFilm.length > 21 ) {
+                newFilm = `${newFilm.substring(0, 22)}...`;
+            }
+
+            if (favorite) {
+                console.log('добавлен любимый фильм!!!')
+            }
+
+            movieDB.movies.push(newFilm);
+            sortArr(movieDB.movies);
+        
+            createMoviList(movieDB.movies, movieList);
+        }
     
         event.target.reset();
     });
@@ -64,17 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
         poster.style.backgroundImage = 'url("img/bg.jpg")';
     }
 
-    makeChanges(genre, poster);
 
     const  sortArr = (arr) => {
         arr.sort();
     }
     
 
-
-
         function createMoviList(films, parent) {
             parent.innerHTML = "";
+            sortArr(films);
 
             films.forEach((film, i) => {
                 parent.innerHTML += `
@@ -82,6 +87,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="delete"></div>
                     </li>
                 `;
+            });
+
+            deleteMovi.forEach((btn, i) => {
+                btn.addEventListener('click', () => {
+                    btn.parentElement.remove();
+                    films.splice(i, 1);
+
+
+                    createMoviList(movieDB.movies, movieList);
+                });
             });
         }
 
